@@ -26,6 +26,9 @@ TBLPROPERTIES ('transactional'='true');
 INSERT INTO Perfil_txn
 SELECT * FROM perfil;
 
+# Mostrar el perfil con la id_usuario = 1 insertado antes del update
+SELECT * FROM Perfil_txn WHERE id_usuario = 1;
+
 # Actualizar el usuario con ID 1
 UPDATE Perfil_txn 
 SET nombre = 'nombre_actualizado', 
