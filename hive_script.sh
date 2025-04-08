@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#TODO: Verificar que todos los ervicios estan encendidos
+
 # Verificar que se ha proporcionado un argumento
 if [ $# -eq 0 ]; then
     echo "Error: Se requiere un flag como argumento"
@@ -50,6 +52,16 @@ case "$1" in
     -partbuck)
         echo "Ejecutando: Creación de tablas con partición y bucketing"
         beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f partbuck.hql
+
+        echo "Tablas con partición y bucketing creadas y datos cargados correctamente."
+        echo "Las tablas se han optimizado de la siguiente manera:"
+        echo " - Usuario: Bucketing por id_usuario"
+        echo " - Perfil: Particionado por edad y bucketing por id_usuario"
+        echo " - Pelicula: Particionado por año de estreno y bucketing por director"
+        echo " - Actor: Bucketing por id_actor"
+        echo " - Pelicula_Actor y Pelicula_Genero: Bucketing por id_pelicula"
+        echo " - Contrato: Particionado por país y año de contratación, bucketing por id_perfil"
+        echo " - Visualizacion: Particionado por año y mes de visualización, bucketing por id_pelicula"
         ;;
         
     -views)
