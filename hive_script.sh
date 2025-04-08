@@ -1,7 +1,4 @@
 #!/bin/bash
-
-#TODO: Verificar que todos los ervicios estan encendidos
-
 # Verificar que se ha proporcionado un argumento
 if [ $# -eq 0 ]; then
     echo "Error: Se requiere un flag como argumento"

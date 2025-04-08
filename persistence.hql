@@ -3,6 +3,18 @@
 CREATE DATABASE IF NOT EXISTS moviebind_external;
 USE moviebind_external;
 
+-- Eliminar tablas si existen (en orden inverso para evitar problemas de dependencias)
+DROP TABLE IF EXISTS Visualizacion;
+DROP TABLE IF EXISTS Contrato;
+DROP TABLE IF EXISTS Producto;
+DROP TABLE IF EXISTS Pelicula_Genero;
+DROP TABLE IF EXISTS Pelicula_Actor;
+DROP TABLE IF EXISTS Actor;
+DROP TABLE IF EXISTS Pelicula;
+DROP TABLE IF EXISTS Genero;
+DROP TABLE IF EXISTS Perfil;
+DROP TABLE IF EXISTS Usuario;
+
 -- Usuario - Tabla externa
 CREATE EXTERNAL TABLE Usuario (
     id_usuario INT,
@@ -152,4 +164,3 @@ UNION ALL
 SELECT 'Contrato' AS tabla, COUNT(*) AS registros FROM moviebind_external.Contrato
 UNION ALL
 SELECT 'Visualizacion' AS tabla, COUNT(*) AS registros FROM moviebind_external.Visualizacion;
-
