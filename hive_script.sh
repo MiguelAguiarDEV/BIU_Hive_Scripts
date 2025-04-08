@@ -9,7 +9,7 @@ fi
 # Configuración de conexión a Beeline
 BEELINE_CONNECTION="jdbc:hive2://localhost:10001/;transportMode=http;httpPath=cliservice"
 BEELINE_USER="sqoop"
-BEELINE_PASSWORD="1234"
+BEELINE_PASSWORD="pavilion+U"
 
 case "$1" in
     -moveData)
@@ -25,10 +25,21 @@ case "$1" in
         ;;
         
     -ingest)
-        echo "Ejecutando: Ingestión de datos mediante Sqoop y Flume"
-        # NABIL: Añadir comandos aquí
-        
-        ;;
+    echo "Ejecutando: Ingestión de datos mediante Sqoop y Flume"
+    
+    echo "1. Importando tablas de MariaDB a HDFS mediante Sqoop..."
+    sqoop import-all-tables \
+      --connect "jdbc:mysql://localhost/MovieBind" \
+      --username sqoop --password pavilion+U \
+      --warehouse-dir /practica_hive/mariadb_hive_script/MovieBind \
+      --fields-terminated-by '|' \
+      --lines-terminated-by '\n'
+    
+    echo "2. Creando tablas en Hive y enlazando con datos en HDFS..."
+    beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f ingest.hql
+    
+    echo "Ingestión de datos completada."
+    ;;
         
     -modify)
         echo "Ejecutando: Modificación de registro en la tabla PROFILE"
