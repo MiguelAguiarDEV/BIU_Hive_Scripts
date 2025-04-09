@@ -20,7 +20,8 @@ case "$1" in
         
     -queries)
         echo "Ejecutando: Consultas sobre la base de datos"
-        # ISMAIL: Añadir comandos aquí
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f queries.hql
+        echo "Consultas ejecutadas correctamente."
         
         ;;
         
@@ -48,7 +49,27 @@ case "$1" in
         
     -extract)
         echo "Ejecutando: Extracción de información con filtros a HDFS y sistema local"
-        # ISMAIL: Añadir comandos aquí
+        echo "▶ Creando directorio en HDFS..."
+        hdfs dfs -mkdir -p /home/hadoop/practica_hive_filter/perfiles_mayores_30
+
+        echo "▶ Ejecutando consulta Hive para perfiles con edad > 30..."
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f extract.hql
+
+        echo "▶ Archivos generados en HDFS:"
+        hdfs dfs -ls /home/hadoop/practica_hive_filter/perfiles_mayores_30
+
+        echo "▶ Mostrando contenido:"
+        hdfs dfs -cat /home/hadoop/practica_hive_filter/perfiles_mayores_30/000000_0
+
+        echo "▶ Creando carpeta local si no existe..."
+        mkdir -p /home/hadoop/practica_hive_filter
+
+        echo "▶ Copiando archivos desde HDFS al sistema de ficheros local..."
+        hdfs dfs -get /home/hadoop/practica_hive_filter/perfiles_mayores_30 /home/hadoop/practica_hive_filter/
+
+        echo "▶ Archivos en sistema local:"
+        ls /home/hadoop/practica_hive_filter/perfiles_mayores_30/
+        cat /home/hadoop/practica_hive_filter/perfiles_mayores_30/000000_0
         
         ;;
         
