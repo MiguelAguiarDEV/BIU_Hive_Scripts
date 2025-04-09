@@ -1,5 +1,7 @@
 SET hive.auto.convert.join=false;
 
+use practica_hive_script;
+
 -- Historial de visualización de películas del usuario.
 CREATE VIEW historial_visualizacion_usuario AS 
 SELECT u.id_usuario, u.nickname, p.titulo, v.fecha_visualizacion 
