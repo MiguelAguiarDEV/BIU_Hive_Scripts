@@ -74,8 +74,23 @@ case "$1" in
         
     -views)
         echo "Ejecutando: Creación de vistas (incluyendo una materializada)"
-        # NABIL: Añadir comandos aquí
         
+        echo "1. Realizando inserciones de datos para las vistas..."
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f views_insert.hql
+        
+        echo "2. Creando vistas..."
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f views_create.hql
+    
+        echo "Vistas creadas correctamente:"
+        echo " - historial_visualizacion_usuario: Historial de visualización de películas por usuario"
+        echo " - top5_peliculas_por_idioma: Top 5 películas con más ingresos brutos por idioma"
+        echo " - peliculas_multigenero: Películas que pertenecen a más de un género"
+        echo " - usuarios_contrato_activo: Lista de usuarios con contrato activo"
+        echo " - top3_generos_por_usuario: Top 3 géneros más vistos por cada usuario"
+        echo " - top5_directores_por_peliculas: Top 5 directores que más películas han dirigido"
+        echo " - top5_contratos_mas_largos: Top 5 contratos de más larga duración"
+        echo " - top10_palabras_clave: Top 10 palabras clave más usadas en las películas"
+        echo " - ingresos_por_director: Ingresos brutos generados por cada director"
         ;;
         
     *)
