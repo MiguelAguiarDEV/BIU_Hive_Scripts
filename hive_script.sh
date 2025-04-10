@@ -31,19 +31,19 @@ case "$1" in
     sqoop import-all-tables \
       --connect "jdbc:mysql://localhost/MovieBind" \
       --username sqoop --password pavilion+U \
-      --warehouse-dir /practica_hive/mariadb_hive_script/MovieBind \
+      --warehouse-dir /practica_hive/mariadb_hive/MovieBind \
       --fields-terminated-by '|' \
       --lines-terminated-by '\n'
     
     echo "2. Creando tablas en Hive y enlazando con datos en HDFS..."
-    beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f ingest.hql
+    beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=false -f ingest.hql
     
     echo "Ingestión de datos completada."
     ;;
         
     -modify)
         echo "Ejecutando: Modificación de registro en la tabla PROFILE"
-        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f modify.hql
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=false -f modify.hql
         ;;
         
     -extract)
@@ -54,12 +54,12 @@ case "$1" in
         
     -persistence)
         echo "Ejecutando: Creación de tablas EXTERNAL y carga de datos"
-        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f persistence.hql
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=false -f persistence.hql
         ;;
         
     -partbuck)
         echo "Ejecutando: Creación de tablas con partición y bucketing"
-        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f partbuck.hql
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=false -f partbuck.hql
 
         echo "Tablas con partición y bucketing creadas y datos cargados correctamente."
         echo "Las tablas se han optimizado de la siguiente manera:"
@@ -76,10 +76,10 @@ case "$1" in
         echo "Ejecutando: Creación de vistas (incluyendo una materializada)"
         
         echo "1. Realizando inserciones de datos para las vistas..."
-        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f views_insert.hql
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=false -f views_insert.hql
         
         echo "2. Creando vistas..."
-        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f views_create.hql
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=false -f views_create.hql
     
         echo "Vistas creadas correctamente:"
         echo " - historial_visualizacion_usuario: Historial de visualización de películas por usuario"

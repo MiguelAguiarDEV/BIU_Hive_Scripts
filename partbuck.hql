@@ -10,6 +10,18 @@ SET hive.exec.max.dynamic.partitions.pernode = 1000;
 CREATE DATABASE IF NOT EXISTS moviebind_partbuck;
 USE moviebind_partbuck;
 
+-- Eliminar las tablas si ya existen
+DROP TABLE IF EXISTS Usuario;
+DROP TABLE IF EXISTS Perfil;
+DROP TABLE IF EXISTS Genero;
+DROP TABLE IF EXISTS Pelicula;
+DROP TABLE IF EXISTS Actor;
+DROP TABLE IF EXISTS Pelicula_Actor;
+DROP TABLE IF EXISTS Pelicula_Genero;
+DROP TABLE IF EXISTS Producto;
+DROP TABLE IF EXISTS Contrato;
+DROP TABLE IF EXISTS Visualizacion;
+
 -- Usuario con bucketing (por id_usuario)
 CREATE TABLE Usuario (
     id_usuario INT,
@@ -20,7 +32,7 @@ CREATE TABLE Usuario (
 CLUSTERED BY (id_usuario) INTO 4 BUCKETS
 ROW FORMAT DELIMITED  
 FIELDS TERMINATED BY '|'  
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Perfil con partición por edad y bucketing por id_usuario
 CREATE TABLE Perfil (
@@ -36,7 +48,7 @@ PARTITIONED BY (edad INT)
 CLUSTERED BY (id_usuario) INTO 4 BUCKETS
 ROW FORMAT DELIMITED  
 FIELDS TERMINATED BY '|'  
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Genero (tabla pequeña, no necesita partición ni bucketing)
 CREATE TABLE Genero (
@@ -45,7 +57,7 @@ CREATE TABLE Genero (
 )
 ROW FORMAT DELIMITED  
 FIELDS TERMINATED BY '|'  
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Pelicula con partición por año_estreno y bucketing por director
 CREATE TABLE Pelicula (
@@ -67,7 +79,7 @@ PARTITIONED BY (anio_estreno INT)
 CLUSTERED BY (director) INTO 8 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Actor (tabla de dimensión)
 CREATE TABLE Actor (
@@ -77,7 +89,7 @@ CREATE TABLE Actor (
 CLUSTERED BY (id_actor) INTO 4 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Pelicula_Actor (tabla de hechos)
 CREATE TABLE Pelicula_Actor (
@@ -87,7 +99,7 @@ CREATE TABLE Pelicula_Actor (
 CLUSTERED BY (id_pelicula) INTO 8 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Pelicula_Genero (tabla de hechos)
 CREATE TABLE Pelicula_Genero (
@@ -97,7 +109,7 @@ CREATE TABLE Pelicula_Genero (
 CLUSTERED BY (id_pelicula) INTO 8 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Producto (tabla pequeña de dimensión)
 CREATE TABLE Producto (
@@ -106,7 +118,7 @@ CREATE TABLE Producto (
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Contrato con partición por país y año de contratación
 CREATE TABLE Contrato (
@@ -123,7 +135,7 @@ PARTITIONED BY (pais STRING, anio_contratacion INT)
 CLUSTERED BY (id_perfil) INTO 8 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Visualizacion con partición por año y mes de visualización
 CREATE TABLE Visualizacion (
@@ -136,7 +148,7 @@ PARTITIONED BY (anio_visualizacion INT, mes_visualizacion INT)
 CLUSTERED BY (id_pelicula) INTO 16 BUCKETS
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY '|'
-STORED AS ORC;
+STORED AS TEXTFILE;
 
 -- Comandos para insertar datos desde las tablas originales a las tablas particionadas
 

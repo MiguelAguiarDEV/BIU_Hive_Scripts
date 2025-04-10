@@ -1,12 +1,4 @@
-use practica_hive_script;
-
-CREATE TABLE Pelicula_Genero (
-  id_pelicula INT,
-  id_genero INT
-)
-ROW FORMAT DELIMITED
-FIELDS TERMINATED BY '|'
-STORED AS TEXTFILE;
+USE practica_hive;
 
 INSERT INTO TABLE Pelicula_Genero VALUES
 (1, 1),  -- Película 1, Género 1

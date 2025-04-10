@@ -1,6 +1,6 @@
 SET hive.auto.convert.join=false;
 
-use practica_hive_script;
+USE practica_hive;
 
 -- Historial de visualización de películas del usuario.
 CREATE VIEW historial_visualizacion_usuario AS 
