@@ -14,8 +14,34 @@ BEELINE_PASSWORD="pavilion+U"
 case "$1" in
     -moveData)
         echo "Ejecutando: Pasar datos de MariaDB a Apache Hive pasando por HDFS"
-        # NABIL: Añadir comandos aquí
         
+        # Configuración de MariaDB
+        DB_USER="sqoop"
+        DB_PASS="pavilion+U"
+        DB_NAME="MovieBind"
+        EXPORT_DIR="/home/hadoop/comandos_practica_hive/tablas_mariadb_exportadas"
+        
+        # Asegurarse de que el directorio de exportación existe
+        mkdir -p $EXPORT_DIR
+        
+        echo "1. Exportando tablas desde MariaDB a archivos de texto..."
+        # Obtener lista de tablas
+        TABLES=$(mysql -u$DB_USER -p$DB_PASS $DB_NAME -e "SHOW TABLES;" | grep -v "Tables_in")
+        
+        # Exportar cada tabla a un archivo de texto
+        for TABLE in $TABLES
+        do
+          echo "▶ Exportando tabla $TABLE a $EXPORT_DIR/$TABLE.txt"
+          
+          # Exportar datos a archivo de texto delimitado por tabuladores
+          mysql -u$DB_USER -p$DB_PASS $DB_NAME -e "SELECT * FROM $TABLE;" | sed 's/\t/\\t/g' > $EXPORT_DIR/$TABLE.txt
+        
+        done
+        
+        echo "2. Creando tablas en Hive y cargando datos desde archivos de texto..."
+        beeline -u "$BEELINE_CONNECTION" -n "$BEELINE_USER" -p "$BEELINE_PASSWORD" --verbose=true -f load_data.hql
+        
+        echo "Exportación de MariaDB a Hive completada. Los datos están disponibles en Hive."
         ;;
         
     -queries)
