@@ -1,5 +1,5 @@
-create database practica_hive_script;
-use practica_hive_script;
+CREATE DATABASE IF NOT EXISTS practica_hive_script;
+USE practica_hive_script;
 
 CREATE TABLE Usuario (
     id_usuario INT,

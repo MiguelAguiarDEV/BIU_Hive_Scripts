@@ -1,5 +1,6 @@
 SET hive.auto.convert.join = false;
-use practica_hive;
+CREATE DATABASE IF NOT EXISTS practica_hive;
+USE practica_hive;
 
 INSERT OVERWRITE DIRECTORY '/home/hadoop/practica_hive_filter/perfiles_mayores_30'
 ROW FORMAT DELIMITED

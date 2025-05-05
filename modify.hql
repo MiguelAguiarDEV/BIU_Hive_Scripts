@@ -3,6 +3,8 @@ SET hive.support.concurrency=true;
 SET hive.enforce.bucketing=true;
 SET hive.exec.dynamic.partition=true;
 SET hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;
+
+CREATE DATABASE IF NOT EXISTS practica_hive;
 USE practica_hive;
 
 # Eliminar la tabla si existe

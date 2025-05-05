@@ -1,134 +1,75 @@
 # MovieBind Hive Project
 
-This repository contains scripts for managing a movie database system called MovieBind using Apache Hive, HDFS, and MariaDB. The project demonstrates various data processing operations including data ingestion, queries, extraction, and optimization techniques.
+Este proyecto contiene scripts para gestionar un sistema de base de datos de películas llamado MovieBind usando Apache Hive, HDFS y MariaDB. Incluye operaciones de ingestión, consultas, extracción y optimización de datos.
 
-## Overview
+## Estructura del Proyecto
 
-The main component is a Bash script (`hive_script.sh`) that serves as a command-line interface for various operations related to the MovieBind database. The script handles different operations through command-line flags.
+- `hive_script.sh`: Script principal para ejecutar operaciones mediante flags.
+- Archivos `.hql`: Scripts HiveQL para cada operación.
 
-## Prerequisites
+## Flags disponibles y su coherencia
 
-- Apache Hadoop and HDFS
+### `-moveData`
+- **Descripción:** Exporta todas las tablas de MariaDB (`MovieBind`) a archivos de texto y los importa a Hive.
+- **Base de datos Hive:** `practica_hive`
+- **Tablas:** Crea y carga todas las tablas principales (`Usuario`, `Perfil`, `Genero`, `Pelicula`, `Actor`, `Pelicula_Actor`, `Pelicula_Genero`, `Producto`, `Contrato`, `Visualizacion`).
+- **Notas:** Usa `CREATE DATABASE IF NOT EXISTS practica_hive`.
+
+### `-queries`
+- **Descripción:** Ejecuta consultas de análisis y pruebas sobre la base de datos principal.
+- **Base de datos Hive:** `practica_hive`
+- **Tablas:** Usa todas las tablas principales.
+
+### `-ingest`
+- **Descripción:** Realiza ingestión de datos desde MariaDB a HDFS usando Sqoop y crea tablas en Hive enlazadas a los datos en HDFS.
+- **Base de datos Hive:** `practica_hive_script`
+- **Tablas:** Crea todas las tablas principales en formato TEXTFILE.
+- **Notas:** Usa `CREATE DATABASE IF NOT EXISTS practica_hive_script`.
+
+### `-modify`
+- **Descripción:** Modifica registros en la tabla `Perfil` usando transacciones.
+- **Base de datos Hive:** `practica_hive`
+- **Tablas:** Crea y usa `Perfil_txn` (transaccional) y consulta/actualiza datos de `Perfil`.
+
+### `-extract`
+- **Descripción:** Extrae perfiles con edad > 30 a HDFS y al sistema local.
+- **Base de datos Hive:** `practica_hive`
+- **Tablas:** Usa `Perfil`.
+
+### `-persistence`
+- **Descripción:** Crea tablas EXTERNAL en Hive enlazadas a datos en HDFS.
+- **Base de datos Hive:** `moviebind_external`
+- **Tablas:** Crea todas las tablas principales como EXTERNAL.
+- **Notas:** Usa `CREATE DATABASE IF NOT EXISTS moviebind_external`.
+
+### `-partbuck`
+- **Descripción:** Crea tablas optimizadas con particiones y bucketing para análisis eficiente.
+- **Base de datos Hive:** `moviebind_partbuck` (creada si no existe)
+- **Tablas:** Crea todas las tablas principales con particiones y/o bucketing. Los datos se copian desde `practica_hive`.
+- **Notas:** Usa `CREATE DATABASE IF NOT EXISTS moviebind_partbuck` y requiere que `practica_hive` ya exista.
+
+### `-views`
+- **Descripción:** Inserta datos de ejemplo y crea vistas analíticas (incluyendo una materializada).
+- **Base de datos Hive:** `practica_hive_script`
+- **Tablas:** Usa las tablas principales y crea varias vistas para análisis.
+- **Notas:** Usa `CREATE DATABASE IF NOT EXISTS practica_hive_script`.
+
+## Notas de coherencia
+- Todos los scripts crean la base de datos si no existe antes de usarla.
+- Los nombres de tablas y bases de datos son consistentes entre scripts.
+- Puedes ejecutar cualquier flag de forma independiente y el entorno se preparará automáticamente.
+
+## Requisitos
+- Apache Hadoop y HDFS
 - Apache Hive
 - Apache Sqoop
 - Apache Flume
 - MariaDB
 - Beeline client
 
-## Configuration
-
-The script uses the following connection parameters for Beeline:
-- Connection string: `jdbc:hive2://localhost:10001/;transportMode=http;httpPath=cliservice`
-- Username: `sqoop`
-- Password: `pavilion+U`
-
-## Usage
-
-To use the script, run it with one of the available flags:
-
+## Uso
 ```bash
 ./hive_script.sh [FLAG]
 ```
-
-Where `[FLAG]` is one of the following options:
-
-## Available Operations
-
-### `-moveData`
-Transfers data from MariaDB to Apache Hive through HDFS.
-```bash
-./hive_script.sh -moveData
-```
-
-### `-queries`
-Executes queries on the database using the `queries.hql` file.
-```bash
-./hive_script.sh -queries
-```
-
-### `-ingest`
-Performs data ingestion using Sqoop and Flume:
-1. Imports all tables from MariaDB to HDFS using Sqoop
-2. Creates tables in Hive and links to the data in HDFS
-```bash
-./hive_script.sh -ingest
-```
-
-### `-modify`
-Modifies records in the PROFILE table using the `modify.hql` file.
-```bash
-./hive_script.sh -modify
-```
-
-### `-extract`
-Extracts filtered information to HDFS and the local file system:
-1. Creates a directory in HDFS
-2. Executes a query to filter profiles with age > 30
-3. Displays generated files and copies them to the local file system
-```bash
-./hive_script.sh -extract
-```
-
-### `-persistence`
-Creates EXTERNAL tables and loads data using the `persistence.hql` file.
-```bash
-./hive_script.sh -persistence
-```
-
-### `-partbuck`
-Creates tables with partitioning and bucketing for optimization:
-- Usuario: Bucketing by id_usuario
-- Perfil: Partitioned by age and bucketed by id_usuario
-- Pelicula: Partitioned by release year and bucketed by director
-- Actor: Bucketing by id_actor
-- Pelicula_Actor and Pelicula_Genero: Bucketing by id_pelicula
-- Contrato: Partitioned by country and contract year, bucketed by id_perfil
-- Visualizacion: Partitioned by year and month of viewing, bucketed by id_pelicula
-```bash
-./hive_script.sh -partbuck
-```
-
-### `-views`
-Creates views (including a materialized view):
-1. Inserts data for views
-2. Creates several views including:
-   - historial_visualizacion_usuario: User's movie viewing history
-   - top5_peliculas_por_idioma: Top 5 movies with highest gross income by language
-   - peliculas_multigenero: Movies belonging to multiple genres
-   - usuarios_contrato_activo: Users with active contracts
-   - top3_generos_por_usuario: Top 3 most watched genres by each user
-   - top5_directores_por_peliculas: Top 5 directors with most movies directed
-   - top5_contratos_mas_largos: Top 5 longest contracts
-   - top10_palabras_clave: Top 10 most used keywords in movies
-   - ingresos_por_director: Gross income generated by each director
-```bash
-./hive_script.sh -views
-```
-
-## Project Structure
-
-```
-MovieBind/
-├── hive_script.sh          # Main script
-├── queries.hql             # HQL file for queries
-├── ingest.hql              # HQL file for data ingestion
-├── modify.hql              # HQL file for modification operations
-├── extract.hql             # HQL file for extraction operations
-├── persistence.hql         # HQL file for creating EXTERNAL tables
-├── partbuck.hql            # HQL file for partitioning and bucketing
-├── views_insert.hql        # HQL file for inserting data for views
-└── views_create.hql        # HQL file for creating views
-```
-
-## Database Schema
-
-The MovieBind database contains several tables including:
-- Usuario (User)
-- Perfil (Profile)
-- Pelicula (Movie)
-- Actor
-- Pelicula_Actor (Movie_Actor)
-- Pelicula_Genero (Movie_Genre)
-- Contrato (Contract)
-- Visualizacion (Viewing)
+Donde `[FLAG]` es uno de los anteriores.
 

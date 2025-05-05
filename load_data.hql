@@ -1,6 +1,9 @@
 -- Script para cargar datos en Hive usando RegexSerDe
 -- Ajustado para manejar el separador literal "\t"
 
+CREATE DATABASE IF NOT EXISTS practica_hive;
+USE practica_hive;
+
 -- Crear tabla Actor
 CREATE TABLE IF NOT EXISTS Actor (
   id_actor INT,

@@ -1,4 +1,5 @@
-use practica_hive_script;
+CREATE DATABASE IF NOT EXISTS practica_hive_script;
+USE practica_hive_script;
 
 CREATE TABLE Pelicula_Genero (
   id_pelicula INT,

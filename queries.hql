@@ -1,5 +1,6 @@
+CREATE DATABASE IF NOT EXISTS practica_hive;
+USE practica_hive;
 SET hive.auto.convert.join = false;
-use practica_hive;
 -- Insert data into the tables
 INSERT INTO pelicula (
         id_pelicula,
